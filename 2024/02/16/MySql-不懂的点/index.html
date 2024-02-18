@@ -1,0 +1,442 @@
+<!DOCTYPE html><html lang="cn" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>MySql 不懂的点 | 熊二的博客</title><meta name="author" content="bear-2"><meta name="copyright" content="bear-2"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="MySql 不懂的点一、安装 mysql（docker）以下 MySql 5.7方式一 、快捷方式，仅配置root密码 1docker run --name mysql5.7 -p 3306:3306 -e MYSQL_ROOT_PASSWORD&#x3D;123456 -d mysql:5.7  方式二、挂载数据卷 123456789101112# 宿主机创建数据存放目录映射到容器mkdir -p &#x2F;us">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySql 不懂的点">
+<meta property="og:url" content="http://example.com/2024/02/16/MySql-%E4%B8%8D%E6%87%82%E7%9A%84%E7%82%B9/index.html">
+<meta property="og:site_name" content="熊二的博客">
+<meta property="og:description" content="MySql 不懂的点一、安装 mysql（docker）以下 MySql 5.7方式一 、快捷方式，仅配置root密码 1docker run --name mysql5.7 -p 3306:3306 -e MYSQL_ROOT_PASSWORD&#x3D;123456 -d mysql:5.7  方式二、挂载数据卷 123456789101112# 宿主机创建数据存放目录映射到容器mkdir -p &#x2F;us">
+<meta property="og:locale">
+<meta property="og:image" content="http://example.com/img/post1.jpeg">
+<meta property="article:published_time" content="2024-02-16T02:00:00.000Z">
+<meta property="article:modified_time" content="2024-02-16T07:30:39.842Z">
+<meta property="article:author" content="bear-2">
+<meta property="article:tag" content="keyword">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/post1.jpeg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2024/02/16/MySql-%E4%B8%8D%E6%87%82%E7%9A%84%E7%82%B9/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.12.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.32/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简"},
+  noticeOutdate: {"limitDay":365,"position":"top","messagePrev":"It has been","messageNext":"days since the last update, the content of the article may be outdated."},
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":230},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Error',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: true,
+    post: true
+  },
+  runtime: 'days',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"You have switched to Traditional Chinese","cht_to_chs":"You have switched to Simplified Chinese","day_to_night":"You have switched to Dark Mode","night_to_day":"You have switched to Light Mode","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-right"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.0/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  percent: {
+    toc: false,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'MySql 不懂的点',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-02-16 15:30:39'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const now = new Date()
+          const hour = now.getHours()
+          const isNight = hour <= 6 || hour >= 18
+          if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/custom.css" media="defer" onload="this.media='all'"><link rel="stylesheet" href="/css/universe.css"><span id="fps"></span><!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zfour/Butterfly-double-row-display@1.00/cardlistpost.min.css"/>
+<style>#recent-posts > .recent-post-item >.recent-post-info > .article-meta-wrap > .tags:before {content:"\A";
+  white-space: pre;}#recent-posts > .recent-post-item >.recent-post-info > .article-meta-wrap > .tags > .article-meta__separator{display:none}</style>
+<link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.css" /><link rel="stylesheet" href="/css/runtime.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-wowjs/lib/animate.min.css" media="print" onload="this.media='screen'"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.1.1"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">6</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">5</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope-open"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/post1.jpeg')"><nav id="nav"><span id="blog-info"><a href="/" title="熊二的博客"><span class="site-name">熊二的博客</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> Search</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope-open"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">MySql 不懂的点</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2024-02-16T02:00:00.000Z" title="Created 2024-02-16 10:00:00">2024-02-16</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2024-02-16T07:30:39.842Z" title="Updated 2024-02-16 15:30:39">2024-02-16</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/mysql/">mysql</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">Word Count:</span><span class="word-count">5.1k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">Reading Time:</span><span>16mins</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="MySql 不懂的点"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post Views:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="MySql-不懂的点"><a href="#MySql-不懂的点" class="headerlink" title="MySql 不懂的点"></a>MySql 不懂的点</h1><h2 id="一、安装-mysql（docker）"><a href="#一、安装-mysql（docker）" class="headerlink" title="一、安装 mysql（docker）"></a>一、安装 mysql（docker）</h2><h3 id="以下-MySql-5-7"><a href="#以下-MySql-5-7" class="headerlink" title="以下 MySql 5.7"></a>以下 MySql 5.7</h3><p><strong>方式一 、快捷方式，仅配置root密码</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run --name mysql5.7 -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 -d mysql:5.7</span><br></pre></td></tr></table></figure>
+
+<p><strong>方式二、挂载数据卷</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">宿主机创建数据存放目录映射到容器</span></span><br><span class="line">mkdir -p /user_app/mysql5.7/data</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">宿主机创建配置文件目录映射到容器</span> </span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">(需要在此目录下创建<span class="string">&quot;conf.d&quot;</span>、<span class="string">&quot;mysql.conf.d&quot;</span>两个目录)</span></span><br><span class="line">mkdir -p /user_app/mysql5.7/conf</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">(建议在此目录创建my.cnf文件并进行相关MySQL配置)</span></span><br><span class="line">mkdir -p /user_app/mysql5.7/conf/conf.d</span><br><span class="line">mkdir -p /user_app/mysql5.7/conf/mysql.conf.d</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">宿主机创建日志目录映射到容器</span></span><br><span class="line">mkdir -p /user_app/mysql5.7/logs</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash"> CentOS 7 不建议用这个命令</span></span><br><span class="line">docker run --name mysql5.7 -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 -d  -v /usr/local/docker_data/mysql/data:/var/lib/mysql -v /usr/local/docker_data/mysql/conf:/etc/mysql/ -v /usr/local/docker_data/mysql/logs:/var/log/mysql mysql:5.7</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">经测试上面这行命令在 CentOS 7 下目录挂载失败。</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">在上面这行命令的基础上增加了 --privileged=<span class="literal">true</span> 参数，让容器拥有真正的root权限</span></span><br><span class="line">docker run --privileged=true --name mysql5.7 -p 13306:3306 -e MYSQL_ROOT_PASSWORD=root -d</span><br><span class="line">-v /user_app/mysql5.7/data:/var/lib/mysql</span><br><span class="line">-v /user_app/mysql5.7/conf:/etc/mysql/</span><br><span class="line">-v /user_app/mysql5.7/logs:/var/log/mysql mysql:5.7.30</span><br></pre></td></tr></table></figure>
+
+<h3 id="以下-MySql-8"><a href="#以下-MySql-8" class="headerlink" title="以下 MySql 8"></a>以下 MySql 8</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">运行、下载</span></span><br><span class="line">docker run -p 23306:3306 --name mysql8 -e MYSQL_ROOT_PASSWORD=root  -d mysql:8.0.30</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">复制容器内的文件</span></span><br><span class="line">docker cp  mysql8:/etc/mysql /user_app/mysql8/conf</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">删除容器</span></span><br><span class="line">docker stop mysql8</span><br><span class="line">docker rm mysql8</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">真正运行</span></span><br><span class="line">sudo docker run -p 23306:3306 --name mysql \</span><br><span class="line">-v /user_app/mysql8/conf:/etc/mysql</span><br><span class="line">-v /user_app/mysql8/log:/var/log \</span><br><span class="line">-v /user_app/mysql8/data:/var/lib/mysql \</span><br><span class="line">-v /user_app/mysql8/lib:/var/lib/mysql-files</span><br><span class="line">-e MYSQL_ROOT_PASSWORD=root \</span><br><span class="line">-d mysql:8.0.30</span><br></pre></td></tr></table></figure>
+
+<h2 id="二、多版本并发控制-MVCC"><a href="#二、多版本并发控制-MVCC" class="headerlink" title="二、多版本并发控制 MVCC"></a>二、多版本并发控制 MVCC</h2><h3 id="1、简述"><a href="#1、简述" class="headerlink" title="1、简述"></a>1、简述</h3><h4 id="什么是-MVCC？"><a href="#什么是-MVCC？" class="headerlink" title="什么是 MVCC？"></a>什么是 MVCC？</h4><blockquote>
+<p>MVCC，全称Multi-Version Concurrency Control，即多版本并发控制。MVCC是一种并发控制的方法，一般在数据库管理系统中，实现对数据库的并发访问</p>
+<p>MVCC 在 MySQL InnoDB 中的实现主要是为了提高数据库并发性能，用更好的方式去处理读-写冲突，做到即使有<code>读写冲突</code>时，也能做到<code>不加锁</code>，<code>非阻塞</code>并发读</p>
+</blockquote>
+<h4 id="当前读、快照读和-MVCC-的关系"><a href="#当前读、快照读和-MVCC-的关系" class="headerlink" title="当前读、快照读和 MVCC 的关系"></a>当前读、快照读和 MVCC 的关系</h4><ul>
+<li><strong>当前读</strong></li>
+</ul>
+<p>像 select lock in share mode(共享锁), select for update ; update, insert ,delete (排他锁)这些操作都是一种当前读，为什么叫当前读？就是它读取的是记录的<code>最新版本</code>，读取时还要保证其他并发事务不能修改当前记录，会对读取的记录进行<code>加锁</code>。</p>
+<ul>
+<li><strong>快照读</strong></li>
+</ul>
+<p>像不加锁的 select 操作就是快照读，即<code>不加锁的非阻塞读</code>；快照读的前提是隔离级别不是串行级别，串行级别下的快照读会退化成当前读；之所以出现快照读的情况，是基于提高并发性能的考虑，快照读的实现是基于多版本并发控制，即 MVCC ,可以认为 MVCC 是<code>行锁的一个变种</code>，但它在很多情况下，避免了加锁操作，降低了开销；既然是基于多版本，即快照读可能读到的并<code>不一定</code>是数据的<code>最新版本</code>，而有<code>可能</code>是之前的<code>历史版本</code>。</p>
+<blockquote>
+<p>快照读：即 MVCC <strong>是为了实现读-写冲突不加锁</strong>，而这个读指的就是<strong>快照读</strong>,</p>
+<p>当前读：而非当前读，当<strong>前读实际上是一种加锁的操作，是悲观锁的实现</strong></p>
+</blockquote>
+<h4 id="能解决什么？好处是？"><a href="#能解决什么？好处是？" class="headerlink" title="能解决什么？好处是？"></a>能解决什么？好处是？</h4><p><strong>数据库并发场景</strong>有三种, 分别为：</p>
+<ul>
+<li><strong>读-读</strong>：不存在任何问题，也不需要并发控制</li>
+<li><strong>读-写</strong>：有线程安全问题，可能会造成事务隔离性问题，可能遇到脏读，幻读，不可重复读</li>
+<li><strong>写-写</strong>：有线程安全问题，可能会存在更新丢失问题，比如第一类更新丢失，第二类更新丢失</li>
+</ul>
+<p><strong>好处</strong></p>
+<p>无锁并发控制读写冲突，为事务分配单向增长的<code>时间戳</code>，为每个事务修改保存一个<code>版本</code>，版本与事务时间戳关联，读操作只读该事务开始前的数据库的快照。</p>
+<p>所以MVCC可以为数据库解决以下问题：</p>
+<p><strong>在并发读写数据库时，可以做到在读操作时不用阻塞写操作，写操作也不用阻塞读操作，提高了数据库并发读写的性能 同时还可以解决脏读，幻读，不可重复读等事务隔离问题，但不能解决更新丢失问题</strong></p>
+<p>总之，MVCC就是因为大牛们，不满意只让数据库采用悲观锁这样性能不佳的形式去解决读-写冲突问题，而提出的解决方案，所以在数据库中，因为有了MVCC，所以我们可以形成两个组合：</p>
+<ul>
+<li><strong>MVCC + 悲观锁</strong> MVCC解决读写冲突，悲观锁解决写写冲突</li>
+<li><strong>MVCC + 乐观锁</strong> MVCC解决读写冲突，乐观锁解决写写冲突</li>
+</ul>
+<p>这种组合的方式就可以最大程度的提高数据库并发性能，并解决读写冲突，和写写冲突导致的问题</p>
+<h3 id="2、实现-MVCC-的原理"><a href="#2、实现-MVCC-的原理" class="headerlink" title="2、实现 MVCC 的原理"></a>2、实现 MVCC 的原理</h3><blockquote>
+<p>MVCC的目的就是多版本并发控制，在数据库中的实现，就是为了解决读写冲突，它的实现原理主要是依赖记录中的 <strong>4个隐式字段</strong>、<strong>undo日志</strong>、<strong>Read View</strong> 来实现的。</p>
+</blockquote>
+<h4 id="隐式字段"><a href="#隐式字段" class="headerlink" title="隐式字段"></a>隐式字段</h4><p>每行记录除了我们自定义的字段外，还有数据库隐式定义的 <code>DB_TRX_ID</code>, <code>DB_ROLL_PTR</code> , <code>DB_ROW_ID</code> , <code>DELETED_BIT</code> 等字段</p>
+<ul>
+<li><strong>DB_ROW_ID</strong> 6byte, <code>隐含的自增ID（隐藏主键）</code>，如果数据表没有主键，InnoDB会自动以DB_ROW_ID产生一个聚簇索引</li>
+<li><strong>DB_TRX_ID</strong> 6byte, <code>最近修改(修改/插入)事务ID</code>：记录创建这条记录&#x2F;最后一次修改该记录的事务ID</li>
+<li><strong>DB_ROLL_PTR</strong> 7byte, <code>回滚指针</code>，指向这条记录的上一个版本（存储于rollback segment里）</li>
+<li><strong>DELETED_BIT</strong> 1byte, <code>是否删除的 flag</code>，记录被更新或删除并不代表真的删除，而是删除flag变了</li>
+</ul>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="http://43.139.20.8:9000/learn/db-mysql-mvcc-1.png#id=kIvRy&originHeight=206&originWidth=927&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p>如上图，DB_ROW_ID 是数据库默认为该行记录生成的唯一隐式主键；DB_TRX_ID 是当前操作该记录的事务ID； 而 DB_ROLL_PTR 是一个回滚指针，用于配合undo 日志，指向上一个旧版本；delete flag没有展示出来。</p>
+<h4 id="undo-log"><a href="#undo-log" class="headerlink" title="undo log"></a>undo log</h4><p>InnoDB 把这些为了回滚而记录的这些东西称之为 undo log。这里需要注意的一点是，由于查询操作（SELECT）并不会修改任何用户记录，所以在查询操作执行时，并不需要记录相应的undo log。undo log主要分为3种：</p>
+<p><strong>Insert undo log</strong> ：插入一条记录时，至少要把这条记录的主键值记下来，之后回滚的时候只需要把这个主键值对应的记录删掉就好了。</p>
+<p><strong>Update undo log</strong>：修改一条记录时，至少要把修改这条记录前的旧值都记录下来，这样之后回滚时再把这条记录更新为旧值就好了。</p>
+<p><strong>Delete undo log</strong>：删除一条记录时，至少要把这条记录中的内容都记下来，这样之后回滚时再把由这些内容组成的记录插入到表中就好了。</p>
+<ul>
+<li>删除操作都只是设置一下老记录的 DELETED_BIT，并不真正将过时的记录删除。</li>
+<li>为了节省磁盘空间，InnoDB有专门的 <code>purge（清除）</code> 线程来清理 <code>DELETED_BIT</code> 为 true 的记录。为了不影响 MVCC 的正常工作，purge 线程自己也维护了一个 read view<strong>（这个 read view 相当于系统中最老活跃事务的 read view）</strong>;如果某个记录的 DELETED_BIT 为 true，并且 DB_TRX_ID 相对于 purge 线程的 read view 可见，那么这条记录一定是可以被安全清除的。</li>
+</ul>
+<p>对MVCC有帮助的实质是 <strong>update undo log</strong> ，undo log实际上就是存在rollback segment中旧记录链，它的执行流程如下：</p>
+<p>1、<strong>比如一个有个事务插入persion表插入了一条新记录，记录如下，name为Jerry, age为24岁，隐式主键是1，事务ID和回滚指针，我们假设为NULL</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="http://43.139.20.8:9000/learn/db-mysql-mvcc-2.png#id=pNJZp&originHeight=168&originWidth=833&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p>2、<strong>现在来了一个事务1对该记录的name做出了修改，改为Tom</strong></p>
+<ol>
+<li>在事务1修改该行(记录)数据时，数据库会先对该行加排他锁</li>
+<li>然后把该行数据拷贝到undo log中，作为旧记录，即在undo log中有当前行的拷贝副本</li>
+<li>拷贝完毕后，修改该行name为Tom，并且修改隐藏字段的事务ID为当前事务1的ID, 我们默认从1开始，之后递增，回滚指针指向拷贝到undo log的副本记录，即表示我的上一个版本就是它</li>
+<li>事务提交后，释放锁</li>
+</ol>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="http://43.139.20.8:9000/learn/db-mysql-mvcc-3.png#id=oo5Gy&originHeight=361&originWidth=843&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p>3、<strong>又来了个事务2修改person表的同一个记录，将age修改为30岁</strong></p>
+<ol>
+<li>在事务2修改该行数据时，数据库也先为该行加锁</li>
+<li>然后把该行数据拷贝到undo log中，作为旧记录，发现该行记录已经有undo log了，那么最新的旧数据作为链表的表头，插在该行记录的undo log最前面</li>
+<li>修改该行age为30岁，并且修改隐藏字段的事务ID为当前事务2的ID, 那就是2，回滚指针指向刚刚拷贝到undo log的副本记录</li>
+<li>事务提交，释放锁</li>
+</ol>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="http://43.139.20.8:9000/learn/db-mysql-mvcc-4.png#id=pdXYD&originHeight=513&originWidth=838&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p>从上面，我们就可以看出，不同事务或者相同事务的对同一记录的修改，会导致该记录的 undo log 成为一条记录版本线性表，即链表，undo log 的链首就是最新的旧记录，链尾就是最早的旧记录（当然就像之前说的该 undo log 的节点可能是会 purge 线程清除掉，像图中的第一条 update undo log，其实在事务提交之后可能就被删除丢失了。</p>
+<h4 id="Read-View（读视图）"><a href="#Read-View（读视图）" class="headerlink" title="Read  View（读视图）"></a>Read  View（读视图）</h4><blockquote>
+<p>什么是 Read View，说白了 Read View 就是事务进行快照读操作的时候生产的读视图( Read View )，在该<code>事务执行的快照读（不加锁的非阻塞读）</code>的那一刻，会生成数据库系统当前的一个快照，记录并维护系统<code>当前活跃事务的ID</code>(当每个事务开启时，都会被分配一个ID, 这个ID是递增的，所以最新的事务，ID值越大)</p>
+</blockquote>
+<p>所以我们知道 Read View主要是用来做可见性判断的, 即当我们某个事务执行快照读的时候，对该记录创建一个Read View读视图，把它比作条件用来判断当前事务能够看到哪个版本的数据，即可能是当前最新的数据，也有可能是该行记录的undo log里面的某个版本的数据。</p>
+<p>Read View 遵循一个可见性算法，主要是将要被修改的数据的最新记录中的 DB_TRX_ID（即<code>当前事务ID，即当前该记录提交的版本</code>）取出来，与系统当前其他活跃事务的ID去对比（由Read View维护），如果 DB_TRX_ID 跟 Read View 的属性做了某些比较，不符合可见性，那就通过 DB_ROLL_PTR 回滚指针去取出 Undo Log 中的 DB_TRX_ID 再比较，即遍历链表的 DB_TRX_ID（从链首到链尾，即从最近的一次修改查起），直到找到满足特定条件的 DB_TRX_ID, 那么这个 DB_TRX_ID 所在的旧记录就是当前事务能看见的最新老版本。</p>
+<blockquote>
+<p>那么这个判断条件是什么呢？</p>
+</blockquote>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="http://43.139.20.8:9000/learn/db-mysql-mvcc-5.png#id=B70RC&originHeight=632&originWidth=720&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p>在展示之前，我先简化一下Read View，我们可以把Read View简单的理解成有三个全局属性</p>
+<blockquote>
+<p><strong>trx_list</strong> 未提交事务ID列表，用来维护Read View生成时刻系统正活跃的事务ID</p>
+<p><strong>up_limit_id</strong> 记录trx_list列表中事务ID最小的ID</p>
+<p><strong>low_limit_id</strong> ReadView生成时刻系统尚未分配的下一个事务ID，也就是目前已出现过的事务ID的最大值+1</p>
+</blockquote>
+<ul>
+<li>首先比较DB_TRX_ID &lt; up_limit_id, 如果小于，则当前事务能看到DB_TRX_ID 所在的记录，如果大于等于进入下一个判断</li>
+<li>接下来判断 DB_TRX_ID 大于等于 low_limit_id , 如果大于等于则代表DB_TRX_ID 所在的记录在Read View生成后才出现的，那对当前事务肯定不可见，如果小于则进入下一个判断</li>
+<li>判断DB_TRX_ID 是否在活跃事务之中，trx_list.contains(DB_TRX_ID)，如果在，则代表我Read View生成时刻，你这个事务还在活跃，还没有Commit，你修改的数据，我当前事务也是看不见的；如果不在，则说明，你这个事务在Read View生成之前就已经Commit了，你修改的结果，我当前事务是能看见的</li>
+</ul>
+<h4 id="整体流程"><a href="#整体流程" class="headerlink" title="整体流程"></a>整体流程</h4><p>我们在了解了隐式字段，undo log， 以及Read View的概念之后，就可以来看看MVCC实现的整体流程是怎么样了</p>
+<p>整体的流程是怎么样的呢？我们可以模拟一下</p>
+<p>当事务2对某行数据执行了快照读，数据库为该行数据生成一个Read View读视图，假设当前事务ID为2，此时还有事务1和事务3在活跃中，事务4在事务2快照读前一刻提交更新了，所以Read View记录了系统当前活跃事务1，3的ID，维护在一个列表上，假设我们称为trx_list</p>
+<table>
+<thead>
+<tr>
+<th>事务1</th>
+<th>事务2</th>
+<th>事务3</th>
+<th>事务4</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>事务开始</td>
+<td>事务开始</td>
+<td>事务开始</td>
+<td>事务开始</td>
+</tr>
+<tr>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>修改且已提交</td>
+</tr>
+<tr>
+<td>进行中</td>
+<td>快照读</td>
+<td>进行中</td>
+<td></td>
+</tr>
+<tr>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>Read View不仅仅会通过一个列表trx_list来维护事务2执行快照读那刻系统正活跃的事务ID，还会有两个属性up_limit_id（记录trx_list列表中事务ID最小的ID），low_limit_id(记录trx_list列表中下一个事务ID，也就是目前已出现过的事务ID的最大值+1)；所以在这里例子中up_limit_id就是1，low_limit_id就是4 + 1 &#x3D; 5，trx_list集合的值是1,3，Read View如下图</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="http://43.139.20.8:9000/learn/db-mysql-mvcc-6.png#id=wVsfE&originHeight=151&originWidth=696&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p>我们的例子中，只有事务4修改过该行记录，并在事务2执行快照读前，就提交了事务，所以当前该行当前数据的undo log如下图所示；我们的事务2在快照读该行记录的时候，就会拿该行记录的DB_TRX_ID去跟up_limit_id,low_limit_id和活跃事务ID列表(trx_list)进行比较，判断当前事务2能看到该记录的版本是哪个。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="http://43.139.20.8:9000/learn/db-mysql-mvcc-7.png#id=GRprN&originHeight=338&originWidth=761&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p>所以先拿该记录DB_TRX_ID字段记录的事务ID 4去跟Read View的的up_limit_id比较，看4是否小于up_limit_id(1)，所以不符合条件，继续判断 4 是否大于等于 low_limit_id(5)，也不符合条件，最后判断4是否处于trx_list中的活跃事务, 最后发现事务ID为4的事务不在当前活跃事务列表中, 符合可见性条件，所以事务4修改后提交的最新结果对事务2快照读时是可见的，所以事务2能读到的最新数据记录是事务4所提交的版本，而事务4提交的版本也是全局角度上最新的版本</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="http://43.139.20.8:9000/learn/db-mysql-mvcc-8.png#id=i6oQa&originHeight=1141&originWidth=1647&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p>也正是Read View生成时机的不同，从而造成RC,RR级别下快照读的结果的不同</p>
+<h3 id="3、MVCC相关问题"><a href="#3、MVCC相关问题" class="headerlink" title="3、MVCC相关问题"></a>3、MVCC相关问题</h3><h4 id="RR是如何在RC级的基础上解决不可重复读的？"><a href="#RR是如何在RC级的基础上解决不可重复读的？" class="headerlink" title="RR是如何在RC级的基础上解决不可重复读的？"></a>RR是如何在RC级的基础上解决不可重复读的？</h4><blockquote>
+<p>RR：REPEATABLE READ	可重复读</p>
+<p>RC：READ COMMITTED	 读已提交</p>
+</blockquote>
+<p>表一：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="http://43.139.20.8:9000/learn/db-mysql-mvcc-9.png"></p>
+<p>表二：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="http://43.139.20.8:9000/learn/db-mysql-mvcc-10.png"></p>
+<p>而在表2这里的顺序中，事务B在事务A提交后的快照读和当前读都是实时的新数据400，这是为什么呢？</p>
+<p>这里与上表的唯一区别仅仅是表1的事务B在事务A修改金额前快照读过一次金额数据，而表2的事务B在事务A修改金额前没有进行过快照读。</p>
+<p><strong>所以我们知道事务中快照读的结果是非常依赖该事务首次出现快照读的地方，即某个事务中首次出现快照读的地方非常关键，它有决定该事务后续快照读结果的能力</strong></p>
+<p><strong>我们这里测试的是更新，同时删除和更新也是一样的，如果事务B的快照读是在事务A操作之后进行的，事务B的快照读也是能读取到最新的数据的</strong></p>
+<h4 id="RC-RR级别下的InnoDB快照读有什么不同？"><a href="#RC-RR级别下的InnoDB快照读有什么不同？" class="headerlink" title="RC,RR级别下的InnoDB快照读有什么不同？"></a>RC,RR级别下的InnoDB快照读有什么不同？</h4><p>正是Read View生成时机的不同，从而造成RC,RR级别下快照读的结果的不同</p>
+<ul>
+<li>在RR级别下的某个事务的对某条记录的第一次快照读会创建一个快照及Read View, 将当前系统活跃的其他事务记录起来，此后在调用快照读的时候，还是使用的是同一个Read View，所以只要当前事务在其他事务提交更新之前使用过快照读，那么之后的快照读使用的都是同一个Read View，所以对之后的修改不可见；</li>
+<li>即RR级别下，快照读生成Read View时，Read View会记录此时所有其他活动事务的快照，这些事务的修改对于当前事务都是不可见的。而早于Read View创建的事务所做的修改均是可见</li>
+<li>而在RC级别下的，事务中，每次快照读都会新生成一个快照和Read View, 这就是我们在RC级别下的事务中可以看到别的事务提交的更新的原因</li>
+</ul>
+<p><strong>总之在 <strong><code>**RC**</code></strong> 隔离级别下，是每个快照读都会生成并获取</strong><code>**最新的 Read View**</code><strong>；而在 <strong><code>**RR**</code></strong> 隔离级别下，则是同一个事务中的</strong><code>**第一个**</code><strong>快照读才会创建Read View, 之后的快照读获取的都是同一个 Read View</strong>。</p>
+<h2 id="三、使用雪花算法而不用自增ID"><a href="#三、使用雪花算法而不用自增ID" class="headerlink" title="三、使用雪花算法而不用自增ID"></a>三、使用雪花算法而不用自增ID</h2><h3 id="理由"><a href="#理由" class="headerlink" title="理由"></a>理由</h3><ol>
+<li><strong>分布式系统：</strong> 在分布式系统中，多个数据库实例可能同时插入数据，简单的自增ID可能会导致冲突。雪花算法生成的ID包含了时间戳、机器ID和序列号等信息，确保在不同机器上生成的ID不会冲突。</li>
+<li><strong>避免单点瓶颈：</strong> 自增ID通常由数据库维护，而在高并发环境下，数据库的自增ID维护可能成为性能的瓶颈。使用雪花算法，ID的生成可以在应用层完成，避免了对数据库的频繁访问。</li>
+<li><strong>不依赖数据库状态：</strong> 自增ID需要数据库维护一个计数器，而雪花算法生成ID时不依赖数据库的状态。这使得系统更加容错，即使数据库出现问题，ID的生成依然可以进行。</li>
+<li><strong>更好的可扩展性：</strong> 在分布式系统中，如果需要扩展数据库，可能涉及到将数据迁移到新的数据库实例。使用雪花算法生成的ID在不同的数据库实例上不会冲突，使得扩展更加容易。</li>
+</ol>
+<h3 id="数据库自增ID的生成方式"><a href="#数据库自增ID的生成方式" class="headerlink" title="数据库自增ID的生成方式"></a>数据库自增ID的生成方式</h3><p>依赖于数据库内部的计数器，该计数器在表的自增列上逐渐增加，确保每次插入新记录时自增列的值都是唯一的。</p>
+<ol>
+<li><p><strong>计数器：</strong> 数据库内部维护了一个计数器，用于跟踪每个表的自增列的下一个可用值。这个计数器是持久性的，即在数据库关闭和重新启动时也能保持状态。</p>
+</li>
+<li><p><strong>锁机制：</strong> 为了避免并发问题，MySQL使用锁机制来确保在任何时刻只有一个事务能够递增计数器并获取下一个自增ID。这样可以避免多个并发事务同时尝试递增计数器，从而产生相同的自增ID。</p>
+<blockquote>
+<ul>
+<li><strong>表级锁（Table-level Locks）：</strong> 在一些MySQL的存储引擎中，例如MyISAM，表级锁用于保护计数器的递增操作。这意味着在高并发环境下，多个事务不能同时递增同一个表的计数器。</li>
+<li><strong>行级锁（Row-level Locks）：</strong> 在其他存储引擎，例如InnoDB，可以使用行级锁，允许更细粒度的控制。这样在并发插入数据时，不同事务可以同时递增不同行的计数器，减小了锁的争用。</li>
+</ul>
+</blockquote>
+</li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>Author: </span><span class="post-copyright-info"><a href="http://example.com">bear-2</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>Link: </span><span class="post-copyright-info"><a href="http://example.com/2024/02/16/MySql-%E4%B8%8D%E6%87%82%E7%9A%84%E7%82%B9/">http://example.com/2024/02/16/MySql-不懂的点/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/img/post1.jpeg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2024/02/16/git-%E5%B7%A5%E4%BD%9C%E6%B5%81/" title="git 工作流"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/post5.jpeg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next</div><div class="next_info">git 工作流</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Contents</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#MySql-%E4%B8%8D%E6%87%82%E7%9A%84%E7%82%B9"><span class="toc-text">MySql 不懂的点</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%AE%89%E8%A3%85-mysql%EF%BC%88docker%EF%BC%89"><span class="toc-text">一、安装 mysql（docker）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A5%E4%B8%8B-MySql-5-7"><span class="toc-text">以下 MySql 5.7</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A5%E4%B8%8B-MySql-8"><span class="toc-text">以下 MySql 8</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%A4%9A%E7%89%88%E6%9C%AC%E5%B9%B6%E5%8F%91%E6%8E%A7%E5%88%B6-MVCC"><span class="toc-text">二、多版本并发控制 MVCC</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E7%AE%80%E8%BF%B0"><span class="toc-text">1、简述</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-MVCC%EF%BC%9F"><span class="toc-text">什么是 MVCC？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BD%93%E5%89%8D%E8%AF%BB%E3%80%81%E5%BF%AB%E7%85%A7%E8%AF%BB%E5%92%8C-MVCC-%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-text">当前读、快照读和 MVCC 的关系</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%83%BD%E8%A7%A3%E5%86%B3%E4%BB%80%E4%B9%88%EF%BC%9F%E5%A5%BD%E5%A4%84%E6%98%AF%EF%BC%9F"><span class="toc-text">能解决什么？好处是？</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E5%AE%9E%E7%8E%B0-MVCC-%E7%9A%84%E5%8E%9F%E7%90%86"><span class="toc-text">2、实现 MVCC 的原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%90%E5%BC%8F%E5%AD%97%E6%AE%B5"><span class="toc-text">隐式字段</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#undo-log"><span class="toc-text">undo log</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Read-View%EF%BC%88%E8%AF%BB%E8%A7%86%E5%9B%BE%EF%BC%89"><span class="toc-text">Read  View（读视图）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B4%E4%BD%93%E6%B5%81%E7%A8%8B"><span class="toc-text">整体流程</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81MVCC%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98"><span class="toc-text">3、MVCC相关问题</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#RR%E6%98%AF%E5%A6%82%E4%BD%95%E5%9C%A8RC%E7%BA%A7%E7%9A%84%E5%9F%BA%E7%A1%80%E4%B8%8A%E8%A7%A3%E5%86%B3%E4%B8%8D%E5%8F%AF%E9%87%8D%E5%A4%8D%E8%AF%BB%E7%9A%84%EF%BC%9F"><span class="toc-text">RR是如何在RC级的基础上解决不可重复读的？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#RC-RR%E7%BA%A7%E5%88%AB%E4%B8%8B%E7%9A%84InnoDB%E5%BF%AB%E7%85%A7%E8%AF%BB%E6%9C%89%E4%BB%80%E4%B9%88%E4%B8%8D%E5%90%8C%EF%BC%9F"><span class="toc-text">RC,RR级别下的InnoDB快照读有什么不同？</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E4%BD%BF%E7%94%A8%E9%9B%AA%E8%8A%B1%E7%AE%97%E6%B3%95%E8%80%8C%E4%B8%8D%E7%94%A8%E8%87%AA%E5%A2%9EID"><span class="toc-text">三、使用雪花算法而不用自增ID</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%90%86%E7%94%B1"><span class="toc-text">理由</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%87%AA%E5%A2%9EID%E7%9A%84%E7%94%9F%E6%88%90%E6%96%B9%E5%BC%8F"><span class="toc-text">数据库自增ID的生成方式</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2024/02/16/MySql-%E4%B8%8D%E6%87%82%E7%9A%84%E7%82%B9/" title="MySql 不懂的点"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/post1.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="MySql 不懂的点"/></a><div class="content"><a class="title" href="/2024/02/16/MySql-%E4%B8%8D%E6%87%82%E7%9A%84%E7%82%B9/" title="MySql 不懂的点">MySql 不懂的点</a><time datetime="2024-02-16T02:00:00.000Z" title="Created 2024-02-16 10:00:00">2024-02-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/02/16/git-%E5%B7%A5%E4%BD%9C%E6%B5%81/" title="git 工作流"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/post5.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="git 工作流"/></a><div class="content"><a class="title" href="/2024/02/16/git-%E5%B7%A5%E4%BD%9C%E6%B5%81/" title="git 工作流">git 工作流</a><time datetime="2024-02-16T02:00:00.000Z" title="Created 2024-02-16 10:00:00">2024-02-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/02/16/webflux%E7%AC%94%E8%AE%B0/" title="webflux 笔记"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/post2.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="webflux 笔记"/></a><div class="content"><a class="title" href="/2024/02/16/webflux%E7%AC%94%E8%AE%B0/" title="webflux 笔记">webflux 笔记</a><time datetime="2024-02-16T02:00:00.000Z" title="Created 2024-02-16 10:00:00">2024-02-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/02/16/%E4%BC%98%E5%8C%96sql%E5%BB%BA%E8%AE%AE/" title="优化 sql 建议"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/post5.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="优化 sql 建议"/></a><div class="content"><a class="title" href="/2024/02/16/%E4%BC%98%E5%8C%96sql%E5%BB%BA%E8%AE%AE/" title="优化 sql 建议">优化 sql 建议</a><time datetime="2024-02-16T02:00:00.000Z" title="Created 2024-02-16 10:00:00">2024-02-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/02/16/linux-%E5%B0%8F%E6%80%BB%E7%BB%93/" title="linux 小总结"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/post3.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="linux 小总结"/></a><div class="content"><a class="title" href="/2024/02/16/linux-%E5%B0%8F%E6%80%BB%E7%BB%93/" title="linux 小总结">linux 小总结</a><time datetime="2024-02-16T02:00:00.000Z" title="Created 2024-02-16 10:00:00">2024-02-16</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2024 By bear-2</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="Toggle Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" type="button" title="Toggle Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.12.0"></script><script src="/js/main.js?v=4.12.0"></script><script src="/js/tw_cn.js?v=4.12.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.32/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@5.2.0/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.8.5/dist/lazyload.iife.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-pjax"></div><canvas id="universe"></canvas><script defer src="/js/universe.js"></script><script defer src="/js/cursor.js"></script><script async src="/js/fps.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/metingjs/dist/Meting.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">Search</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  Loading the Database</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="Search for Posts" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.12.0"></script></div></div><!-- hexo injector body_end start --><script data-pjax>
+  function butterfly_clock_anzhiyu_injector_config(){
+    var parent_div_git = document.getElementsByClassName('sticky_layout')[0];
+    var item_html = '<div class="card-widget card-clock"><div class="card-glass"><div class="card-background"><div class="card-content"><div id="hexo_electric_clock"><img class="entered loading" id="card-clock-loading" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/loading.gif" style="height: 120px; width: 100%;" data-ll-status="loading"/></div></div></div></div></div>';
+    console.log('已挂载butterfly_clock_anzhiyu')
+    if(parent_div_git) {
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+    }
+  }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = '/';
+  var qweather_key = 'b635e11b35b643518ebac59ab9b32129';
+  var gaud_map_key = '6039b48f0ca60c7fbad0b5ab9d5066db';
+  var baidu_ak_key = 'undefined';
+  var flag = 0;
+  var clock_rectangle = '113.88308,22.55329';
+  var clock_default_rectangle_enable = 'false';
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  </script><script src="https://widget.qweather.net/simple/static/js/he-simple-common.js?v=2.0"></script><script data-pjax src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.js"></script><script data-pjax>
+  function butterfly_footer_beautify_injector_config(){
+    var parent_div_git = document.getElementById('footer-wrap');
+    var item_html = '<div id="workboard"></div><p id="ghbdages"><a class="github-badge" target="_blank" href="https://hexo.io/" style="margin-inline:5px" data-title="博客框架为Hexo_v6.2.0" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Frame-Hexo-blue?style=flat&amp;logo=hexo" alt=""/></a><a class="github-badge" target="_blank" href="https://butterfly.js.org/" style="margin-inline:5px" data-title="主题版本Butterfly_v4.3.1" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Theme-Butterfly-6513df?style=flat&amp;logo=bitdefender" alt=""/></a><a class="github-badge" target="_blank" href="https://vercel.com/" style="margin-inline:5px" data-title="本站采用多线部署，主线路托管于Vercel" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Hosted-Vercel-brightgreen?style=flat&amp;logo=Vercel" alt=""/></a><a class="github-badge" target="_blank" href="https://dashboard.4everland.org/" style="margin-inline:5px" data-title="本站采用多线部署，备用线路托管于4EVERLAND" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Hosted-4EVERLAND-22DDDD?style=flat&amp;logo=IPFS" alt=""/></a><a class="github-badge" target="_blank" href="https://github.com/bear-2" style="margin-inline:5px" data-title="本站项目由Github托管" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Source-Github-d021d6?style=flat&amp;logo=GitHub" alt=""/></a><a class="github-badge" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" style="margin-inline:5px" data-title="本站采用知识共享署名-非商业性使用-相同方式共享4.0国际许可协议进行许可" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Copyright-BY--NC--SA%204.0-d42328?style=flat&amp;logo=Claris" alt=""/></a></p>';
+    console.log('已挂载butterfly_footer_beautify')
+    parent_div_git.insertAdjacentHTML("beforeend",item_html)
+    }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = 'all';
+  var flag = 0;
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_footer_beautify_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_footer_beautify_injector_config();
+  }
+  </script><script async src="/js/runtime.js"></script><div class="js-pjax"><script async="async">var arr = document.getElementsByClassName('recent-post-item');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '2s');
+    arr[i].setAttribute('data-wow-delay', '1s');
+    arr[i].setAttribute('data-wow-offset', '100');
+    arr[i].setAttribute('data-wow-iteration', '2');
+  }</script><script async="async">var arr = document.getElementsByClassName('card-widget');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script></div><script defer src="https://npm.elemecdn.com/hexo-butterfly-wowjs/lib/wow.min.js"></script><script defer src="https://npm.elemecdn.com/hexo-butterfly-wowjs/lib/wow_init.js"></script><!-- hexo injector body_end end --><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/ni-j.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"log":false});</script></body></html>
